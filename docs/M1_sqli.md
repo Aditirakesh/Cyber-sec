@@ -25,6 +25,12 @@ SELECT * FROM users WHERE username = '' OR '1'='1' --' AND password = 'x'
 
 ![exploit](screenshots/M1_sqli_exploit.png)
 
+A lone `'` as the username triggers a raw database error on the vulnerable
+route, which also leaks information about the query structure to an
+attacker:
+
+![db error](screenshots/M1_sqli_db_error.png)
+
 ## (c) Root cause
 User input is concatenated into the SQL string, so the database cannot tell
 the developer's query structure from attacker-supplied data. The attacker's
@@ -42,6 +48,11 @@ data, so the same payload is treated as a literal (non-existent) username and
 the login fails. The fixed route also returns a generic error message.
 
 ![blocked](screenshots/M1_sqli_blocked.png)
+
+The fix does not break normal functionality: logging in with the real
+username and password still succeeds on the fixed route.
+
+![legit login still works](screenshots/M1_sqli_fixed_legit_login.png)
 
 ## (e) Other mitigations (theory)
 - **Input validation with allow-lists:** accept only what is expected (for
