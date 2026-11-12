@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}CSRF Lab — Cyber-sec{% endblock %}
+{% block content %}
+<h1>Cross-Site Request Forgery (CSRF)</h1>
+<p style="color:var(--muted)">M5 · POST-based forged action using an auto-submitting HTML form.</p>
+<div class="card">
+  <span class="badge vuln">Local demo only</span>
+  <p>This page simulates a logged-in user with a dummy wallet. No real money, bank account, or external service is involved.</p>
+  <h2 style="margin-top:1rem">Demo wallet</h2>
+  <p style="font-size:1.5rem;font-weight:700">₹{{ "{:,}".format(balance) }}</p>
+  <p style="color:var(--muted)">Session-bound demo balance. Transfers are stored in your browser session.</p>
+  <form method="post" action="{{ url_for('csrf.reset') }}">
+    <input type="hidden" name="csrf_token" value="{{ token }}">
+    <button class="btn" type="submit">Reset demo wallet</button>
+  </form>
+</div>
+
+<h2>1. Vulnerable POST endpoint</h2>
+<div class="card">
+  <p>The endpoint accepts a state-changing POST request without checking whether the user intended it.</p>
+  <form class="panel" method="post" action="{{ url_for('csrf.vuln_transfer') }}">
+    <label>Recipient</label><input name="recipient" value="Demo recipient" required>
+    <label>Amount (₹)</label><input name="amount" type="number" min="1" max="{{ balance }}" value="100" required>
+    <button class="btn primary" type="submit">Make legitimate vulnerable transfer</button>
+  </form>
+  <p><a href="{{ url_for('csrf.attacker_vuln') }}">Open auto-submitting attacker page for vulnerable endpoint</a></p>
+</div>
+
+<h2>2. Protected POST endpoint</h2>
+<div class="card">
+  <p>The server requires a synchronizer token associated with this session.</p>
+  <form class="panel" method="post" action="{{ url_for('csrf.fixed_transfer') }}">
+    <input type="hidden" name="csrf_token" value="{{ token }}">
+    <label>Recipient</label><input name="recipient" value="Demo recipient" required>
+    <label>Amount (₹)</label><input name="amount" type="number" min="1" max="{{ balance }}" value="100" required>
+    <button class="btn primary" type="submit">Make legitimate protected transfer</button>
+  </form>
+  <p><a href="{{ url_for('csrf.attacker_fixed') }}">Open the same auto-submitting attack against the protected endpoint</a></p>
+</div>
+
+<h2>3. Transfer history</h2>
+{% if transfers %}
+  <ul>{% for t in transfers %}<li>₹{{ t.amount }} transferred to {{ t.recipient }}</li>{% endfor %}</ul>
+{% else %}
+  <p style="color:var(--muted)">No transfers yet.</p>
+{% endif %}
+
+<h2>How to demonstrate the cross-site request</h2>
+<ol>
+  <li>Open this application at <code>http://localhost:5000</code> and keep the session active.</li>
+  <li>Open the attacker page using <code>http://127.0.0.1:5000/csrf/attacker/vuln</code>.</li>
+  <li>The auto-submitting form sends a POST to the localhost vulnerable endpoint. Return to the home page and observe the reduced balance.</li>
+  <li>Reset the wallet, then open <code>http://127.0.0.1:5000/csrf/attacker/fixed</code>. The same forged POST is rejected because it lacks the synchronizer token.</li>
+</ol>
+<div class="alert err">Run only on localhost. The app configures its session cookie as SameSite=None; Secure for this controlled browser demonstration. Use localhost as the legitimate site, and 127.0.0.1 as the separate attacker origin.</div>
+{% endblock %}

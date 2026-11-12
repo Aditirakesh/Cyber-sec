@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}CSRF result — Cyber-sec{% endblock %}
+{% block content %}
+<h1>CSRF request result</h1>
+{% if success %}
+<div class="alert ok">{{ message }}</div>
+{% else %}
+<div class="alert err">{{ message }}</div>
+{% endif %}
+<p><strong>Remaining demo balance:</strong> ₹{{ "{:,}".format(balance) }}</p>
+<p><a href="{{ url_for('csrf.home') }}">Return to CSRF demonstration</a></p>
+{% endblock %}
