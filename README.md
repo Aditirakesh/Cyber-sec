@@ -1,151 +1,266 @@
 # Cyber-sec: Web Server Security Assignment
 
-**IIIT Allahabad · Department of Information Technology**
+**Indian Institute of Information Technology Allahabad**  
+**Department of Information Technology**  
+**Course:** Cyber Security (IT-30001) | Autumn Semester 2026  
 **Instructor:** Dr. Soumyadev Maity
 
-An intentionally vulnerable Flask + SQLite lab built to demonstrate, exploit
-and mitigate four categories of web server vulnerabilities: **SQL
-injection**, **OS command injection**, **Cross-Site Scripting (XSS)**, and
-**Cross-Site Request Forgery (CSRF)**. Each member implements one variant,
-exploits it with evidence, and secures it with one mitigation.
+---
 
-> ⚠ **Run on localhost only.** This application is deliberately insecure and
-> must never be deployed or exposed to the internet.
+## **1. Project Overview**
+
+This repository contains our group's submission for the **Web Server Security Assignment: Exploitation and Mitigation of Four Vulnerability Categories**.
+
+The objective of this assignment is to demonstrate the exploitation of common web application vulnerabilities and implement appropriate security measures to prevent them.
+
+Our project covers the following four vulnerability categories:
+
+- **SQL Injection (SQLi)**
+- **OS Command Injection**
+- **Cross-Site Scripting (XSS)**
+- **Cross-Site Request Forgery (CSRF)**
+
+Each group member is responsible for implementing one specific vulnerability variant in a shared Flask web application. For each variant, we demonstrate the vulnerable implementation, execute a working exploit, explain its root cause, and implement one mitigation to prevent the attack.
+
+The application is intentionally vulnerable for educational and demonstration purposes. It is designed to run **locally on localhost only** and must never be deployed on a public server.
 
 ---
 
-## Ownership declaration (Table 3)
+## **2. Team Members and Ownership (Table 3)**
 
-| Member | Roll number | Category | Variant | Status |
-|---|---|---|---|---|
-| Aditi (M1) | IIT2024007 | SQL injection | Authentication bypass | ✅ Done |
-| Srujan Gawande (M2) | IIT2024016 | XSS | Stored | ⏳ Pending |
-| Disha Gupta (M3) | IIT2024039 | OS command injection | In-band | ⏳ Pending |
-| Apurva (M4) | IIT2024034 | XSS | Reflected | ⏳ Pending |
-| Pratishtha (M5) | IIT2024040 | CSRF | POST-based | ⏳ Pending |
+The following table identifies the individual contributions and ownership of each vulnerability variant.
 
-*(Table complete. Status column updates as each member merges their work.)*
+| Member | Roll Number | Vulnerability Category | Variant Implemented |
+|---|---|---|---|
+| Aditi (M1) | IIT2024007 | SQL Injection | Authentication Bypass |
+| Srujan Gawande (M2) | IIT2024016 | Cross-Site Scripting (XSS) | Stored XSS |
+| Disha Gupta (M3) | IIT2024039 | OS Command Injection | In-band Injection |
+| Apurva (M4) | IIT2024034 | Cross-Site Scripting (XSS) | Reflected XSS |
+| Pratishtha (M5) | IIT2024040 | Cross-Site Request Forgery (CSRF) | POST-based Forged Action |
+
+Each member independently develops and demonstrates their assigned variant. No two members implement the same variant.
 
 ---
 
-## Quick start
+## **3. Technologies Used**
+
+| Component | Technology |
+|---|---|
+| Backend | Python, Flask |
+| Frontend | HTML, CSS |
+| Database | SQLite |
+| Version Control | Git and GitHub |
+| Testing | Browser and HTTP requests |
+
+---
+
+## **4. Application Setup and Execution**
+
+Follow these steps to run the application locally.
+
+**Step 1: Clone the repository**
+
+```bash
+git clone https://github.com/Aditirakesh/Cyber-sec.git
+cd Cyber-sec
+```
+
+**Step 2: Create a virtual environment**
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+```
+
+**Step 3: Activate the virtual environment**
+
+Linux / macOS:
+
+```bash
+source venv/bin/activate
+```
+
+Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+**Step 4: Install dependencies**
+
+```bash
 pip install -r requirements.txt
-python app.py                   # open http://127.0.0.1:5000
 ```
 
-The home page lists every module with a **ready** or **todo** badge.
+**Step 5: Start the application**
+
+```bash
+python app.py
+```
+
+**Step 6: Open the application**
+
+Visit the following address in your browser:
+
+`http://127.0.0.1:5000`
+
+The home page provides access to the individual vulnerability modules. Each module contains its vulnerable and secured implementations along with relevant demonstrations.
 
 ---
 
-## Project structure
+## **5. Application Architecture and Project Structure**
 
-```
+The application uses a modular architecture in which each member's implementation is maintained independently.
+
+- **app.py:** Main application entry point. Automatically discovers and registers the available Flask blueprints from the `modules/` directory.
+- **db.py:** Provides database helper functions and manages separate SQLite databases for individual modules.
+- **templates/base.html:** Shared base template containing the common application layout and styling.
+- **modules/:** Contains the individual vulnerability implementations.
+- **templates/:** Contains the HTML templates associated with each module.
+- **docs/:** Contains the technical documentation for each vulnerability variant.
+
+### **Repository Structure**
+
+```text
 Cyber-sec/
-├── app.py                  # shared entrypoint — auto-registers every module, don't edit
-├── db.py                   # per-module SQLite helper (db.get_conn("<module>"))
+│
+├── app.py
+├── db.py
 ├── requirements.txt
-├── templates/
-│   ├── base.html           # shared theme — all pages extend this
-│   ├── index.html          # home page (module cards)
-│   └── <module>/           # each member's own templates
+│
 ├── modules/
-│   ├── sqli.py              ✅ M1 — SQL injection (auth bypass)
-│   ├── xss_stored.py        ⏳ M2 — Stored XSS
-│   ├── cmdi.py               ⏳ M3 — OS command injection (in-band)
-│   ├── xss_reflected.py     ⏳ M4 — Reflected XSS
-│   └── csrf.py               ⏳ M5 — CSRF (POST-based)
+│   ├── sqli.py
+│   ├── xss_stored.py
+│   ├── cmdi.py
+│   ├── xss_reflected.py
+│   └── csrf.py
+│
+├── templates/
+│   ├── base.html
+│   ├── sqli/
+│   ├── xss_stored/
+│   ├── cmdi/
+│   ├── xss_reflected/
+│   └── csrf/
+│
+├── data/                 (created automatically on first run, not committed)
+│   ├── sqli.db
+│   ├── xss_stored.db
+│   └── ...
+│
 ├── docs/
-│   ├── M1_sqli.md           ✅ payload, root cause, fix, theory
-│   ├── M2_xss_stored.md     ⏳
-│   ├── M3_cmdi.md           ⏳
-│   ├── M4_xss_reflected.md  ⏳
-│   ├── M5_csrf.md           ⏳
-│   └── screenshots/         # exploit + blocked screenshots go here
-└── data/                    # per-module SQLite files (git-ignored, auto-created)
+│   ├── sqli.md
+│   ├── xss_stored.md
+│   ├── cmdi.md
+│   ├── xss_reflected.md
+│   └── csrf.md
+│
+└── README.md
 ```
 
-Every module exposes:
-- `/<module>/` — overview + example payloads
-- `/<module>/vuln/...` — the vulnerable version
-- `/<module>/fixed/...` — the same feature with one mitigation applied
+### **Module Responsibilities**
+
+| Module | Member | Functionality |
+|---|---|---|
+| `sqli.py` | M1 | SQL injection through authentication bypass |
+| `xss_stored.py` | M2 | Stored Cross-Site Scripting |
+| `cmdi.py` | M3 | In-band OS command injection |
+| `xss_reflected.py` | M4 | Reflected Cross-Site Scripting |
+| `csrf.py` | M5 | POST-based Cross-Site Request Forgery |
+
+Each module maintains two separate routes:
+
+- **Vulnerable Route (`/vuln/...`):** Contains the intentionally vulnerable implementation and allows demonstration of the assigned exploit.
+- **Fixed Route (`/fixed/...`):** Implements the same functionality with an appropriate security mitigation.
+
+This structure allows the same attack payload to be tested against both implementations, demonstrating the effectiveness of the mitigation.
 
 ---
 
-## ✅ Completed: M1 — SQL Injection (Authentication bypass)
+## **6. Exploitation and Mitigation Requirements**
 
-- **Vulnerable route:** `/sqli/vuln/login` — login query built by string
-  concatenation.
-- **Exploit payloads:** `' OR '1'='1' --` and `admin' --` both bypass the
-  password check and log in as `admin`.
-- **Root cause:** user input is concatenated directly into the SQL string,
-  so the database can't distinguish code from data.
-- **Fixed route:** `/sqli/fixed/login` — parameterised query (`?`
-  placeholders); the same payloads are rejected.
-- **Theory (other mitigations):** input validation with allow-lists,
-  least-privilege database accounts, safe/generic error messages.
-- Full write-up: [`docs/M1_sqli.md`](docs/M1_sqli.md)
+Each vulnerability module demonstrates the following five aspects as required by the assignment:
+
+1. **Vulnerable Implementation:** Identification and explanation of the code containing the security flaw.
+2. **Working Exploit:** Demonstration of the exact payload or request used to exploit the vulnerability.
+3. **Root Cause:** Explanation of why the vulnerability exists and how the attack succeeds.
+4. **Implemented Mitigation:** Implementation of one security measure, followed by testing the same payload to show that the attack is blocked.
+5. **Other Mitigation Techniques (Theory):** Explanation of alternative security measures discussed in the course lectures.
+
+The alternative mitigation techniques are documented theoretically and do not require separate implementation.
 
 ---
 
-## ⏳ Remaining work (for the rest of the group)
+## **7. Documentation**
 
-Each of the four members below needs to, inside **their own** module file,
-template folder and docs file only:
+Each member maintains an individual technical write-up under the `docs/` directory.
 
-1. Replace the `TODO` stub in `modules/<your_module>.py` with:
-   - A `setup()` that creates your own SQLite table (see `modules/sqli.py`
-     for the pattern) if your variant needs stored data.
-   - A `/vuln/...` route containing the actual flaw.
-   - A `/fixed/...` route with one mitigation applied.
-   - Set `READY = True` once both routes work (this updates your badge on
-     the home page automatically).
-2. Create templates under `templates/<your_module>/` that extend
-   `templates/base.html` — this keeps the whole site's look consistent, you
-   do not need to write any CSS.
-3. Fill in your write-up in `docs/<your_file>.md` — copy
-   `docs/M1_sqli.md`'s structure: (a) vulnerable code, (b) exploit payload,
-   (c) root cause, (d) mitigation + screenshot, (e) theory on the other
-   mitigations from the slides.
-4. Take two screenshots (exploit working, exploit blocked) and save them in
-   `docs/screenshots/`.
-5. Fill in your name and roll number in the ownership table above.
-6. Work on your own branch and open a pull request into `main`:
-   ```bash
-   git checkout -b m2-xss-stored    # use your own member/variant name
-   # ... do your work ...
-   git add .
-   git commit -m "M2: stored XSS vulnerable + fixed"
-   git push -u origin m2-xss-stored
-   ```
+Every write-up includes:
 
-**Reference theory (from the slides), per category:**
-- SQL injection: parameterised queries, allow-list validation, least
-  privilege, safe errors.
-- Command injection: avoid the shell, parameterised execution (argument
-  vector), allow-list validation, least privilege.
-- XSS: context-aware output encoding, framework auto-escaping, a sanitiser
-  for rich HTML, Content Security Policy, HttpOnly cookies, safe DOM sinks.
-- CSRF: anti-CSRF (synchronizer) tokens, SameSite cookies,
-  re-authentication for sensitive actions, avoiding state-changing GET
-  requests.
+- Description of the assigned vulnerability and variant.
+- Vulnerable code and explanation.
+- Exploit payload and observed output.
+- Root cause of the vulnerability.
+- Implemented mitigation and its working.
+- Evidence showing the attack being blocked.
+- Explanation of alternative mitigation techniques discussed in class.
 
 ---
 
-## Deliverables checklist
+## **8. Video Demonstration**
 
-- [ ] Source code in this public GitHub repository
-- [ ] Group video (2-3 min per member, each narrating their own variant)
-- [ ] Ownership declaration (table above) completed
-- [ ] Every member ready to demo and answer viva questions on their own
-      variant
+As part of the submission, the group will prepare a screen-recorded video demonstration with voice-over.
 
-## Team workflow
+Each member will individually demonstrate their assigned vulnerability, including:
 
-Work only in your own module, template folder and docs file, on your own
-branch. Open a pull request into `main` when ready. `app.py` and
-`templates/base.html` are shared — don't edit these unless coordinating with
-the group, so everyone's branch stays conflict-free.
+- The vulnerable implementation.
+- The working exploit and its output.
+- The root cause of the vulnerability.
+- The implemented security mitigation.
+- The same payload being blocked after applying the mitigation.
+
+Each member will narrate their own section to clearly establish individual contributions.
+
+The expected duration is approximately **2–3 minutes per member**.
+
+---
+
+## **9. GitHub Collaboration and Contribution Guidelines**
+
+To maintain independent development and avoid conflicts, each member works on their assigned module.
+
+- Each member develops their implementation in their own module file.
+- Associated HTML templates are maintained in separate folders.
+- Individual documentation is maintained in the `docs/` directory.
+- Members work on separate Git branches.
+- Completed changes are submitted through Pull Requests into the `main` branch.
+
+The following files are shared across the project:
+
+- `app.py`
+- `db.py`
+- `templates/base.html`
+- `requirements.txt`
+
+Changes to shared files should be discussed with the group before implementation to avoid integration conflicts.
+
+---
+
+## **10. Submission Deliverables**
+
+The final submission includes:
+
+1. **GitHub Repository:** Complete source code of the application in a public repository.
+2. **Video Demonstration:** Group screen recording with individual voice-over demonstrations of all assigned vulnerability variants and their mitigations.
+3. **Ownership Declaration:** Completed Table 3 mapping each member to their assigned vulnerability and variant.
+4. **Technical Documentation:** Individual write-ups covering exploitation, root cause, implemented mitigation, and alternative mitigation techniques.
+5. **Viva:** Individual demonstration and explanation of each member's implementation.
+
+---
+
+## **11. Security Disclaimer**
+
+This project is developed strictly for academic and educational purposes as part of the Cyber Security course at IIIT Allahabad.
+
+The vulnerable implementations are intentionally designed to demonstrate common web application security flaws. All testing and exploitation must be restricted to our own locally hosted application.
+
+**Do not deploy the intentionally vulnerable application on public servers or test it against external systems.**
