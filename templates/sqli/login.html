@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}SQLi login ({{ mode }}){% endblock %}
+{% block content %}
+<p><a href="/sqli/">&larr; back</a></p>
+<h1>
+  {% if mode == "vuln" %}Vulnerable login <span class="badge vuln">vuln</span>
+  {% else %}Fixed login <span class="badge fixed">fixed</span>{% endif %}
+</h1>
+
+<form class="panel" method="post">
+  <label>Username</label>
+  <input type="text" name="username" autocomplete="off" placeholder="try: ' OR '1'='1' --">
+  <label>Password</label>
+  <input type="text" name="password" autocomplete="off" placeholder="anything">
+  <div style="margin-top:1rem">
+    <button class="btn primary" type="submit">Login</button>
+  </div>
+</form>
+
+{% if query %}
+<h3>SQL sent to the database</h3>
+<pre>{{ query }}</pre>
+{% endif %}
+
+{% if user %}
+<div class="alert ok">✓ Login successful — logged in as <b>{{ user.username }}</b> (role: {{ user.role }})</div>
+{% elif message %}
+<div class="alert err">✗ {{ message }}</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Web Security Lab</h1>
+<p style="color:var(--muted)">Five vulnerability modules. Each one has a vulnerable route and a fixed route side by side, so the same payload can be shown working, then blocked.</p>
+
+<div class="grid">
+{% for m in modules %}
+  <a class="cardlink" href="/{{ m.name }}/">
+    <div class="card">
+      <div class="cardtitle">
+        {{ m.title }}
+        {% if m.ready %}<span class="badge fixed">ready</span>{% else %}<span class="badge todo">todo</span>{% endif %}
+      </div>
+      <div class="cardmeta">/{{ m.name }}/ &middot; owner: {{ m.owner }}</div>
+    </div>
+  </a>
+{% endfor %}
+</div>
+{% endblock %}
