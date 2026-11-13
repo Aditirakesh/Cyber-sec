@@ -1,4 +1,4 @@
-# M2: Cross-Site Scripting - Stored XSS (Aditi)
+# M2: Cross-Site Scripting - Stored XSS
 
 ## (a) Vulnerable implementation
 
