@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <a href="/" class="text-decoration-none mb-4 d-inline-block">← back to modules</a>
+    
+    <h2 class="mb-3">Cross-Site Scripting (XSS) <span class="badge bg-success fs-6 align-middle">READY</span></h2>
+    
+    <p class="text-muted mb-4">Variant: Stored XSS via unencoded guestbook comments.</p>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('xss_stored.vulnerable') }}" class="text-white text-decoration-none">
+                            Vulnerable Guestbook <span class="badge bg-danger ms-2">VULN</span>
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted mt-2">Output rendered without escaping using the |safe filter</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('xss_stored.secure') }}" class="text-white text-decoration-none">
+                            Secure Guestbook <span class="badge bg-success ms-2">FIXED</span>
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted mt-2">Framework auto-escaping enabled (default Jinja2 behavior)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="mb-3 text-uppercase fs-6 text-muted">PAYLOADS TO TRY</h5>
+    <div class="card bg-dark border-secondary mb-3">
+        <div class="card-body d-flex justify-content-between align-items-center p-3">
+            <code class="text-white">&lt;script&gt;alert('XSS Exploit Successful!')&lt;/script&gt;</code>
+            <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText('<script>alert(\'XSS Exploit Successful!\')</script>')">Copy</button>
+        </div>
+    </div>
+    <p class="text-muted small">Paste into the comment field. This payload triggers an alert box on the vulnerable endpoint, but is displayed as raw text on the secure endpoint.</p>
+</div>
+{% endblock %}

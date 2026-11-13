@@ -1,47 +1,30 @@
-from flask import Flask, request, render_template_string
+from flask import Blueprint, request, render_template
 
-app = Flask(__name__)
-# Simulates a database storing the persistent XSS payload
-comments_db = [] 
+TITLE = "Cross-Site Scripting (Stored XSS)"
+OWNER = "Srujan (M2)"
+READY = True
 
-# --- VULNERABLE IMPLEMENTATION ---
-@app.route('/vulnerable', methods=['GET', 'POST'])
+bp = Blueprint('xss_stored', __name__, url_prefix='/xss_stored')
+
+comments_db = []
+
+@bp.route('/')
+def index():
+    return render_template('xss_stored/index.html')
+
+@bp.route('/vulnerable', methods=['GET', 'POST'])
 def vulnerable():
     if request.method == 'POST':
-        comments_db.append(request.form.get('comment', ''))
-    
-    # Root Cause: The '|safe' filter disables Jinja2's auto-escaping, 
-    # rendering the stored script directly in the DOM.
-    template = '''
-    <h2>Vulnerable Guestbook</h2>
-    <form method="POST"><input type="text" name="comment"><input type="submit" value="Post"></form>
-    <ul>
-    {% for comment in comments_db %} 
-        <li>{{ comment|safe }}</li> 
-    {% endfor %}
-    </ul>
-    '''
-    return render_template_string(template, comments_db=comments_db)
+        # .strip() removes accidental whitespace, and 'if comment:' ensures it isn't empty
+        comment = request.form.get('comment', '').strip()
+        if comment:
+            comments_db.append(comment)
+    return render_template('xss_stored/vulnerable.html', comments=comments_db)
 
-
-# --- MITIGATED IMPLEMENTATION ---
-@app.route('/secure', methods=['GET', 'POST'])
+@bp.route('/secure', methods=['GET', 'POST'])
 def secure():
     if request.method == 'POST':
-        comments_db.append(request.form.get('comment', ''))
-    
-    # Mitigation: Removed '|safe'. Framework auto-escaping converts 
-    # <script> to &lt;script&gt;, neutralizing the payload.
-    template = '''
-    <h2>Secure Guestbook</h2>
-    <form method="POST"><input type="text" name="comment"><input type="submit" value="Post"></form>
-    <ul>
-    {% for comment in comments_db %} 
-        <li>{{ comment }}</li> 
-    {% endfor %}
-    </ul>
-    '''
-    return render_template_string(template, comments_db=comments_db)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        comment = request.form.get('comment', '').strip()
+        if comment:
+            comments_db.append(comment)
+    return render_template('xss_stored/secure.html', comments=comments_db)
