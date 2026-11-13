@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Fixed Ping - OS Command Injection{% endblock %}
+{% block content %}
+<div class="tag-row">
+  <a href="/cmdi/">&larr; Back to Hub</a>
+</div>
+
+<h1>Network Diagnostic Tool <span class="badge fixed">fixed</span></h1>
+<p style="color:var(--muted)">Secured network ping utility using argument-vector execution (shell=False) and strict IP validation.</p>
+
+{% if error %}
+<div class="alert err">{{ error }}</div>
+{% endif %}
+
+<form class="panel" method="POST" action="/cmdi/fixed/">
+  <label for="host">Target IP Address (IPv4 / IPv6 only):</label>
+  <input type="text" name="host" id="host" placeholder="e.g. 127.0.0.1" required>
+  <div style="margin-top:1rem">
+    <button type="submit" class="btn primary">Run Ping</button>
+  </div>
+</form>
+
+{% if output %}
+<h2>Terminal Output</h2>
+<pre>{{ output }}</pre>
+{% endif %}
+{% endblock %}
