@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}OS Command Injection Hub - Cyber-sec Lab{% endblock %}
+{% block content %}
+<h1>OS Command Injection (In-band)</h1>
+<p style="color:var(--muted)">Explore the vulnerable ping diagnostic utility and its secured implementation side by side.</p>
+
+<div class="grid">
+  <a class="cardlink" href="/cmdi/vuln/">
+    <div class="card">
+      <div class="cardtitle">
+        Vulnerable Diagnostic Tool
+        <span class="badge vuln">vulnerable</span>
+      </div>
+      <div class="cardmeta">Concatenates user input into a shell command string using shell=True.</div>
+    </div>
+  </a>
+
+  <a class="cardlink" href="/cmdi/fixed/">
+    <div class="card">
+      <div class="cardtitle">
+        Fixed Diagnostic Tool
+        <span class="badge fixed">mitigated</span>
+      </div>
+      <div class="cardmeta">Uses argument-vector execution with shell=False and defence-in-depth IP validation.</div>
+    </div>
+  </a>
+</div>
+{% endblock %}
+
