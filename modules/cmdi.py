@@ -9,7 +9,7 @@ import ipaddress
 import subprocess
 from flask import Blueprint, render_template, request
 
-OWNER = "M3"
+OWNER = "Disha Gupta (M3)"
 READY = True
 TITLE = "OS Command Injection - In-band"
 bp = Blueprint("cmdi", __name__, url_prefix="/cmdi")

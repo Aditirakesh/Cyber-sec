@@ -9,7 +9,7 @@ import secrets
 
 from flask import Blueprint, abort, redirect, render_template, request, session, url_for
 
-OWNER = "M5"
+OWNER = "Pratishtha (M5)"
 READY = True
 TITLE = "CSRF - POST-based forged action"
 bp = Blueprint("csrf", __name__, url_prefix="/csrf")
