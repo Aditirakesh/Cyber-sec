@@ -15,6 +15,11 @@ Showing search results for:
 </span>
 ```
 
+### Baseline: Legitimate Search on Vulnerable Endpoint
+Normal academic queries (e.g. `Python`) reflect the search term and return relevant campus study resources:
+
+![Legitimate Search Vulnerable](screenshots/M4_xss_reflected_vuln_normal.png)
+
 ---
 
 ## (b) Working exploit (exact payload / request)
@@ -78,7 +83,12 @@ The browser receives the entity-encoded string in the HTTP response:
 Showing search results for: <span>&lt;script&gt;alert(&#39;Reflected XSS&#39;)&lt;/script&gt;</span>
 ```
 
-The browser treats this strictly as printable text. The payload `<script>alert('Reflected XSS')</script>` is displayed safely as literal text on screen, and **zero JavaScript code executes**. Normal search functionality (e.g. searching for `Python`, `DSA`, or `Operating Systems`) remains fully functional.
+The browser treats this strictly as printable text. The payload `<script>alert('Reflected XSS')</script>` is displayed safely as literal text on screen, and **zero JavaScript code executes**. Normal search functionality (e.g. searching for `Python`, `DSA`, or `Operating Systems`) remains fully functional:
+
+![Legitimate Search Fixed](screenshots/M4_xss_reflected_fixed_normal.png)
+
+### Exploit Blocked on Secured Endpoint
+When the exact same payload is submitted, it is safely rendered as harmless plain text without execution:
 
 ![Mitigation Proof](screenshots/M4_xss_reflected_blocked.png)
 
