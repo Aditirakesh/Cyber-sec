@@ -1,62 +1,41 @@
 {% extends "base.html" %}
-
-{% block title %}Reflected XSS - Cyber-sec Lab{% endblock %}
-
+{% block title %}Cross-Site Scripting (Reflected XSS) - Cyber-sec Lab{% endblock %}
 {% block content %}
-<div class="container">
-    <a href="/" class="cardmeta" style="display:inline-block;margin-bottom:1.2rem">← back to modules</a>
-    
-    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.5rem">
-        <h1 style="margin:0">Cross-Site Scripting (Reflected XSS)</h1>
-        <span class="badge fixed">READY</span>
-    </div>
-    
-    <p style="color:var(--muted);margin-bottom:1.5rem">
-        Variant: Reflected XSS via unencoded search query parameters in the Campus Resource Search Portal.
-    </p>
-
-    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:2rem">
-        <a class="cardlink" href="{{ url_for('xss_reflected.vuln') }}">
-            <div class="card" style="border-left:4px solid var(--danger)">
-                <div class="cardtitle">
-                    Vulnerable Search Portal
-                    <span class="badge vuln">VULN</span>
-                </div>
-                <div class="cardmeta">
-                    Output rendered without escaping using Jinja2's <code>|safe</code> filter. Injected JavaScript executes immediately.
-                </div>
-            </div>
-        </a>
-        
-        <a class="cardlink" href="{{ url_for('xss_reflected.fixed') }}">
-            <div class="card" style="border-left:4px solid var(--success)">
-                <div class="cardtitle">
-                    Secure Search Portal
-                    <span class="badge fixed">FIXED</span>
-                </div>
-                <div class="cardmeta">
-                    Framework auto-escaping enabled (default Jinja2 behavior). Special characters are safely converted to HTML entities.
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <h3>Payload to Try</h3>
-    <div class="payload-row">
-        <code>&lt;script&gt;alert('Reflected XSS')&lt;/script&gt;</code>
-        <button class="copybtn" onclick="copyPayload(this, '<script>alert(\'Reflected XSS\')</script>')">Copy</button>
-    </div>
-    <p style="color:var(--muted);font-size:.85rem;margin-top:.5rem">
-        Submit this payload into the search bar. On the vulnerable endpoint, the browser executes the script and triggers an alert box. On the secure endpoint, it is rendered as inert plain text with zero execution.
-    </p>
-
-    <h3>Demonstration Workflow</h3>
-    <ol style="color:var(--muted);font-size:.9rem;padding-left:1.2rem;line-height:1.7">
-        <li>Open the <strong>Vulnerable Search Portal</strong> and search for a normal topic like <code>Python</code> or <code>DSA</code>.</li>
-        <li>Submit the payload <code>&lt;script&gt;alert('Reflected XSS')&lt;/script&gt;</code> and observe the browser popup alert.</li>
-        <li>Switch to the <strong>Secure Search Portal</strong> and submit the exact same payload.</li>
-        <li>Observe that the payload renders harmlessly as literal text on the screen without triggering any alert.</li>
-    </ol>
+<div class="tag-row">
+  <a href="/">&larr; back to modules</a>
 </div>
-{% endblock %}
 
+<h1>Cross-Site Scripting (Reflected XSS) <span class="badge fixed">READY</span></h1>
+<p style="color:var(--muted)">Variant: Reflected XSS via unencoded search query parameters.</p>
+
+<div class="grid">
+  <a class="cardlink" href="/xss_reflected/vuln/">
+    <div class="card">
+      <div class="cardtitle">
+        Vulnerable Search Portal
+        <span class="badge vuln">VULN</span>
+      </div>
+      <div class="cardmeta">Output rendered without escaping using the |safe filter.</div>
+    </div>
+  </a>
+
+  <a class="cardlink" href="/xss_reflected/fixed/">
+    <div class="card">
+      <div class="cardtitle">
+        Secure Search Portal
+        <span class="badge fixed">FIXED</span>
+      </div>
+      <div class="cardmeta">Framework auto-escaping enabled (default Jinja2 behavior).</div>
+    </div>
+  </a>
+</div>
+
+<h3>Payloads to Try</h3>
+<div class="payload-row">
+  <code>&lt;script&gt;alert('Reflected XSS')&lt;/script&gt;</code>
+  <button type="button" class="copybtn" onclick="copyPayload(this, '<script>alert(\'Reflected XSS\')</script>')">Copy</button>
+</div>
+<p style="color:var(--muted);font-size:.85rem;margin-top:.4rem">
+  Submit into the search field. This payload triggers an alert box on the vulnerable endpoint, but is displayed as raw text on the secure endpoint.
+</p>
+{% endblock %}

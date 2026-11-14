@@ -1,106 +1,54 @@
 {% extends "base.html" %}
-
 {% block title %}Vulnerable Search - Reflected XSS{% endblock %}
-
 {% block content %}
-<div class="container">
-    <a href="{{ url_for('xss_reflected.index') }}" class="cardmeta" style="display:inline-block;margin-bottom:1.2rem">← back to Reflected XSS hub</a>
-
-    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.5rem">
-        <h1 style="margin:0">Campus Resource Search Portal</h1>
-        <span class="badge vuln">VULNERABLE</span>
-    </div>
-
-    <div class="alert err" style="margin-bottom:1.5rem">
-        ⚠️ <strong>Vulnerability Active:</strong> User input from the URL parameter <code>q</code> is reflected directly into the HTML response without output encoding using Jinja2's <code>|safe</code> filter.
-    </div>
-
-    <!-- Search Form (GET method) -->
-    <form method="GET" action="{{ url_for('xss_reflected.vuln') }}" class="panel" style="margin-top:0">
-        <label for="searchQuery" style="margin-top:0">Search Campus Study Resources (Notes, DSA, OS, DBMS, PYQs):</label>
-        <div style="display:flex;gap:.5rem;margin-top:.4rem;flex-wrap:wrap">
-            <input type="text" name="q" id="searchQuery" value="{{ query }}" placeholder="e.g. Python, DSA, OS, DBMS..." style="flex:1;min-width:240px" required>
-            <button type="submit" class="btn primary">Search</button>
-        </div>
-
-        <div class="tag-row" style="margin:.8rem 0 0;align-items:center">
-            <span style="color:var(--muted);font-size:.82rem">Quick Test:</span>
-            <a href="{{ url_for('xss_reflected.vuln', q='Python') }}" class="btn" style="padding:.25rem .6rem;font-size:.8rem">Python</a>
-            <a href="{{ url_for('xss_reflected.vuln', q='DSA') }}" class="btn" style="padding:.25rem .6rem;font-size:.8rem">DSA</a>
-            <a href="{{ url_for('xss_reflected.vuln', q='Operating Systems') }}" class="btn" style="padding:.25rem .6rem;font-size:.8rem">Operating Systems</a>
-            <a href="{{ url_for('xss_reflected.vuln', q='<script>alert(\'Reflected XSS\')</script>') }}" class="btn" style="padding:.25rem .6rem;font-size:.8rem;border-color:var(--danger);color:var(--danger)">
-                ⚡ Test XSS Payload
-            </a>
-        </div>
-    </form>
-
-    {% if query %}
-    <!-- Reflected Query Output Display (Primary Exploit Point) -->
-    <div class="card" style="border-left:4px solid var(--danger);margin-bottom:1.5rem">
-        <div style="font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Search Query Reflection Point:</div>
-        <div style="font-size:1.25rem;margin-top:.3rem">
-            Showing search results for: 
-            <!-- VULNERABLE IMPLEMENTATION: Output rendered unencoded via |safe filter -->
-            <span style="color:var(--danger);font-weight:700" id="reflectedTarget">{{ query | safe }}</span>
-        </div>
-        <div style="margin-top:.8rem">
-            <a href="{{ url_for('xss_reflected.fixed', q=query) }}" class="btn" style="font-size:.85rem;border-color:var(--success);color:var(--success)">
-                🛡️ Re-run this exact query on Secure (Fixed) endpoint →
-            </a>
-        </div>
-    </div>
-
-    <!-- Technical Code Inspector Box -->
-    <div class="card" style="margin-bottom:1.5rem">
-        <div class="cardtitle" style="font-size:.92rem;color:var(--muted)">
-            <span>TECHNICAL INSPECTION &amp; ROOT CAUSE</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:.8rem;font-size:.85rem">
-            <div>
-                <span style="color:var(--muted)">1. Received GET Parameter:</span>
-                <pre style="margin-top:.3rem"><code>q = {{ query }}</code></pre>
-            </div>
-            <div>
-                <span style="color:var(--muted)">2. Jinja2 Template Syntax Used:</span>
-                <pre style="margin-top:.3rem;color:var(--danger)"><code>&#123;&#123; query | safe &#125;&#125;</code></pre>
-            </div>
-        </div>
-        <p style="color:var(--danger);font-size:.85rem;margin:.5rem 0 0">
-            <strong>Why it executes:</strong> The <code>|safe</code> filter instructs Jinja2 not to escape special HTML characters. The browser parser encounters the raw <code>&lt;script&gt;</code> element in the response and executes the JavaScript code.
-        </p>
-    </div>
-    {% endif %}
-
-    <!-- Resource Results Catalog -->
-    <h3>Available Learning Resources ({{ results_count }})</h3>
-    {% if results_count > 0 %}
-    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
-        {% for res in results %}
-        <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
-                <span class="badge" style="background:var(--surface-2);color:var(--accent)">{{ res.category }}</span>
-                <span class="cardmeta" style="margin:0">{{ res.code }}</span>
-            </div>
-            <div class="cardtitle">{{ res.title }}</div>
-            <p style="color:var(--muted);font-size:.88rem;margin:.4rem 0 .8rem">{{ res.description }}</p>
-            <div class="tag-row" style="margin:0">
-                {% for tag in res.tags %}
-                <code style="font-size:.78rem">#{{ tag }}</code>
-                {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="card" style="text-align:center;padding:2rem">
-        <p style="color:var(--muted);margin:0">
-            No resources matched your search term "<strong>{{ query }}</strong>".
-        </p>
-        <p style="color:var(--warn);font-size:.85rem;margin-top:.5rem">
-            Note: In Reflected XSS, the payload executes regardless of whether any database records are found, because reflection occurs before search result rendering!
-        </p>
-    </div>
-    {% endif %}
+<div class="tag-row">
+  <a href="/xss_reflected/">&larr; Back to Hub</a>
 </div>
-{% endblock %}
 
+<h1>Campus Search Portal <span class="badge vuln">VULNERABLE</span></h1>
+<p style="color:var(--muted)">Search campus resources. Untrusted input is reflected directly into the response without output encoding.</p>
+
+<div class="alert err">
+  &#9888; Intentionally vulnerable endpoint. The output is not encoded.
+</div>
+
+<form class="panel" method="GET" action="/xss_reflected/vuln/">
+  <label for="q">Search Query:</label>
+  <input type="text" name="q" id="q" value="{{ query or '' }}" placeholder="e.g. Python, DSA, OS..." required>
+  <div style="margin-top:1rem">
+    <button type="submit" class="btn primary">Search</button>
+  </div>
+</form>
+
+<h3>Harmless Proof Payloads</h3>
+<div class="payload-row">
+  <code>&lt;script&gt;alert('Reflected XSS')&lt;/script&gt;</code>
+  <button type="button" class="copybtn" onclick="copyPayload(this, '<script>alert(\'Reflected XSS\')</script>')">Copy</button>
+</div>
+
+{% if query %}
+<h2>Search Results</h2>
+<div class="card" style="border-left:4px solid var(--danger);margin-bottom:1rem">
+  <div class="cardmeta">Showing results for:</div>
+  <!-- VULNERABILITY: User input rendered unencoded via |safe filter -->
+  <div style="font-size:1.15rem;margin-top:.3rem">
+    <span style="color:var(--danger);font-weight:700" id="reflectedTarget">{{ query | safe }}</span>
+  </div>
+</div>
+
+{% if results_count > 0 %}
+<div class="grid">
+  {% for res in results %}
+  <div class="card">
+    <div class="cardtitle">{{ res.title }}</div>
+    <div class="cardmeta">{{ res.category }} &middot; {{ res.code }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="color:var(--muted)">
+  No campus resources matched your search query.
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
